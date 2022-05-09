@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const neoLogger = require("../modules/Logger");
+const siteLogger = require("../modules/Logger");
 const siteConfig = require('../modules/Config');
 
 async function homeView(req, res, next) {

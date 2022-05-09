@@ -1,4 +1,4 @@
-const neoLogger = require("../modules/Logger");
+const siteLogger = require("../modules/Logger");
 const usersModels = require("../model/usersModel");
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -17,7 +17,7 @@ async function login(req, res, next) {
             res.json({ error: true, message: "Usuario o contraseña incorrectos." });
         }
     } catch (e) {
-        neoLogger.logError("Error calling Users->login", e.message);
+        siteLogger.logError("Error calling Users->login", e.message);
         console.log(e)
         next(e)
     }
