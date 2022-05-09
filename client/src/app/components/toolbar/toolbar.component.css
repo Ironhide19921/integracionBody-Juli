@@ -1,0 +1,30 @@
+.spacer {
+    flex: 1;
+}
+
+.toolbar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    background: rgb(9, 0, 170);
+    background: linear-gradient(273deg, rgba(9, 0, 170, 1) 0%, rgba(12, 12, 177, 1) 28%, rgba(207, 230, 235, 1) 100%);
+    color: white;
+    font-weight: 600;
+}
+
+.toolbar img {
+    margin: 0 16px;
+}
+
+.toolbar .logout {
+    margin: 0 16px;
+}
+
+.toolbar .logout:hover {
+    opacity: 0.8;
+    cursor: pointer;
+}

@@ -1,0 +1,33 @@
+{
+    "mode": "development",
+    "development": {
+        "serverPort": {
+            "http": "3000",
+            "https": "3001"
+        },
+        "path": {
+            "root": "/"
+        },
+        "SSL": {
+            "key": "",
+            "cert": ""
+        },
+        "winservice": "bin/www",
+        "url": {
+            "root": "/"
+        },
+        "authentication": {
+            "apiKey": "",
+            "apiSecret": "",
+            "apiMail": "",
+            "jwtAppSecret": "neo2020",
+            "admin": {
+                "name": "admin",
+                "password": "123456"
+            }
+        }
+    },
+    "production": {
+        "root": "/"
+    }
+}

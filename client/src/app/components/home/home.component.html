@@ -1,0 +1,47 @@
+<app-toolbar></app-toolbar>
+<div class="content-logs">
+    <h2>Logs</h2>
+    <p>Select log type to inspect:</p>
+    <div class="card-container">
+        <a class="card"  rel="noopener" (click)="getFiles('console')">
+            <svg class="material-icons" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+                <path
+                    d="M19 4H5c-1.11 0-2 .9-2 2v12c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.89-2-2-2zm0 14H5V8h14v10z" />
+            </svg>
+
+            <span>Console logs</span>
+
+            <svg class="material-icons" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+                <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" /></svg>
+        </a>
+
+        <a class="card"  rel="noopener" (click)="getFiles('error')">
+            <svg class="material-icons" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black" width="24"
+                height="24">
+                <path d="M12 5.99L19.53 19H4.47L12 5.99M12 2L1 21h22L12 2zm1 14h-2v2h2v-2zm0-6h-2v4h2v-4z" /></svg>
+
+            <span>Error logs</span>
+
+            <svg class="material-icons" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+                <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" /></svg>
+        </a>
+
+        <a class="card"  rel="noopener" (click)="getFiles('response')">
+            <svg class="material-icons" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24"
+                viewBox="0 0 24 24" width="24">
+                <g>
+                    <path
+                        d="M14,12l-2,2l-2-2l2-2L14,12z M12,6l2.12,2.12l2.5-2.5L12,1L7.38,5.62l2.5,2.5L12,6z M6,12l2.12-2.12l-2.5-2.5L1,12 l4.62,4.62l2.5-2.5L6,12z M18,12l-2.12,2.12l2.5,2.5L23,12l-4.62-4.62l-2.5,2.5L18,12z M12,18l-2.12-2.12l-2.5,2.5L12,23l4.62-4.62 l-2.5-2.5L12,18z" />
+                </g>
+            </svg>
+
+            <span>Api logs</span>
+
+            <svg class="material-icons" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+                <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" /></svg>
+        </a>
+    </div>
+</div>
+<hr />
+<h2 id="anchor">{{type}}</h2>
+<app-file-list [files]="files"></app-file-list>
