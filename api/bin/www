@@ -4,31 +4,54 @@
  * Module dependencies.
  */
 
-var app = require('../app');
-var debug = require('debug')('dncservice:server');
-var http = require('http');
+var httpsApp = require('../app');
+var httpApp = require('../app');
+var debug = require('debug')('NeoRestApiService:server');
+const siteConfig = require('../modules/config');
+const https = require('https');
+const http = require('http');
+const fs = require('fs');
+
+console.log(siteConfig)
+/**
+ * Create HTTPS server if enabled
+ */
+let httpsServerEnable = true;
+if (siteConfig.SSL.key == undefined || siteConfig.SSL.cert == undefined || siteConfig.SSL.key == '' || siteConfig.SSL.cert == '')
+  httpsServerEnable = false;
+
+if (httpsServerEnable) {
+  var httpsPort = normalizePort(siteConfig.serverPort.https);
+  httpsApp.set('port', httpsPort);
+  var key = fs.readFileSync(siteConfig.SSL.key);
+  var cert = fs.readFileSync(siteConfig.SSL.cert);
+  var options = {
+    key: key,
+    cert: cert
+  };
+  const httpsServer = https.createServer(options, httpsApp);
+  httpsServer.listen(httpsPort);
+  httpsServer.on('error', onError);
+  httpsServer.on('listening', onListening);
+}
 
 /**
  * Get port from environment and store in Express.
  */
+ var httpPort = normalizePort(siteConfig.serverPort.http);
 
-var port = normalizePort(process.env.PORT || '3000');
-app.set('port', port);
-
+ httpApp.set('port', httpPort);
 /**
  * Create HTTP server.
  */
-
-var server = http.createServer(app);
-
+const httpServer = http.createServer(httpApp);
 /**
  * Listen on provided port, on all network interfaces.
  */
 
-server.listen(port);
-server.on('error', onError);
-server.on('listening', onListening);
-
+httpServer.listen(httpPort);
+httpServer.on('error', onError);
+httpServer.on('listening', onListening);
 /**
  * Normalize a port into a number, string, or false.
  */
@@ -59,8 +82,8 @@ function onError(error) {
   }
 
   var bind = typeof port === 'string'
-    ? 'Pipe ' + port
-    : 'Port ' + port;
+    ? 'Pipe ' + httpsPort + " / " + httpPort
+    : 'Port ' + httpsPort + " / " + httpPort;
 
   // handle specific listen errors with friendly messages
   switch (error.code) {
@@ -82,9 +105,16 @@ function onError(error) {
  */
 
 function onListening() {
-  var addr = server.address();
-  var bind = typeof addr === 'string'
-    ? 'pipe ' + addr
-    : 'port ' + addr.port;
-  debug('Listening on ' + bind);
+  if (httpsServerEnable) {
+    var httpsAddr = httpsServer.address();
+    var httpsBind = typeof httpsAddr === 'string'
+      ? 'pipe ' + httpsAddr
+      : 'port ' + httpsAddr.port;
+    debug('Listening on ' + httpsBind);
+  }
+  var httpAddr = httpServer.address();
+  var httpBind = typeof httpAddr === 'string'
+    ? 'pipe ' + httpAddr
+    : 'port ' + httpAddr.port;
+  debug('Listening on ' + httpBind);
 }
