@@ -1,49 +1,48 @@
 {
-    "mode": "development",
-    "development": {
-        "serverPort": {
-            "http": "3080",
-            "https": "3443"
-        },
-        "path": {
-            "root": "/",
-            "winservice": "bin/www"
-        },
-        "SSL": {
-            "key": "",
-            "cert": ""
-        },
-        "authentication": {
-            "jwtAppSecret": "Neotel-2022!",
-            "admin": {
-                "name": "9999",
-                "password": "167987"
-            }
-        },
-        "idTask": "120"
+  "mode": "development",
+  "development": {
+    "serverPort": {
+      "http": "3080",
+      "https": "3443"
     },
-    "production": {
-        "serverPort": {
-            "http": "3080",
-            "https": "3443"
-        },
-        "path": {
-            "root": "/",
-            "winservice": "bin/www"
-        },
-        "SSL": {
-            "key": "",
-            "cert": ""
-        },
-        "url": {
-            "root": "/"
-        },
-        "authentication": {
-            "jwtAppSecret": "Neotel-2022!",
-            "admin": {
-                "name": "9999",
-                "password": "167987"
-            }
-        }
+    "path": {
+      "root": "/",
+      "winservice": "bin/www"
+    },
+    "SSL": {
+      "key": "",
+      "cert": ""
+    },
+    "authentication": {
+      "jwtAppSecret": "Neotel-2022!",
+      "admin": {
+        "name": "9999",
+        "password": "167987"
+      }
     }
+  },
+  "production": {
+    "serverPort": {
+      "http": "3080",
+      "https": "3443"
+    },
+    "path": {
+      "root": "/",
+      "winservice": "bin/www"
+    },
+    "SSL": {
+      "key": "",
+      "cert": ""
+    },
+    "url": {
+      "root": "/"
+    },
+    "authentication": {
+      "jwtAppSecret": "Neotel-2022!",
+      "admin": {
+        "name": "9999",
+        "password": "167987"
+      }
+    }
+  }
 }

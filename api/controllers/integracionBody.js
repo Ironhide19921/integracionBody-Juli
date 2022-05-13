@@ -1,7 +1,7 @@
 const { response } = require("express");
 const axios = require("axios");
-const siteConfig = require("../modules/Config");
 const parseString = require("xml2js").parseString;
+const siteConfig = require("../modules/Config");
 
 const integracionBody = async (req = request, res = response) => {
   try {
@@ -28,8 +28,6 @@ const integracionBody = async (req = request, res = response) => {
 
     const { idTask, parameters, jsonParam } = req.body;
     const cantParameters = Object.keys(parameters[0]).length;
-    // const executeTask = cantParameters.toString().length == 1 ?'0'+1 : cantParameters;
-    // const executeTask = cantParameters.toString().length == 1 ?'0'+cantParameters : cantParameters;
 
     parameters.forEach((element) => {
       console.log("element", element);
@@ -81,16 +79,12 @@ const integracionBody = async (req = request, res = response) => {
       data: dataParsed,
     });
   } catch (error) {
-    // console.log(error);
-
+    console.log("error", error);
+    console.log("error.response.data", error.response.data);
     return res.status(error.response.status).json({
+      data: error.response.data,
       error,
     });
-
-    // const data = error.response.data;
-    // return res.status(error.response.status).json({
-    //   data,
-    // });
   }
 };
 

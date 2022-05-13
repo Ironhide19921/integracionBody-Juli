@@ -1,0 +1,30 @@
+<service>
+	<id>integracionservice.exe</id>
+	<name>Integracion service</name>
+	<description>Modificar nombre para ver en Windows Services. http:3080</description>
+	<executable>C:\Program Files\nodejs\node.exe</executable>
+	<argument>C:\Users\Neotel\Desktop\multichannel-NEO\multichannel-neo\api\node_modules\node-windows\lib\wrapper.js</argument>
+	<argument>--file</argument>
+	<argument>C:\Users\Neotel\Desktop\multichannel-NEO\multichannel-neo\api\bin\www</argument>
+	<argument>--scriptoptions=</argument>
+	<argument>--log</argument>
+	<argument>Integracion service wrapper</argument>
+	<argument>--grow</argument>
+	<argument>0.25</argument>
+	<argument>--wait</argument>
+	<argument>1</argument>
+	<argument>--maxrestarts</argument>
+	<argument>3</argument>
+	<argument>--abortonerror</argument>
+	<argument>n</argument>
+	<argument>--stopparentfirst</argument>
+	<argument>false</argument>
+	<logmode>rotate</logmode>
+	<stoptimeout>30sec</stoptimeout>
+	<serviceaccount>
+		<domain>DESKTOP-FSCKHAS</domain>
+		<user>LocalSystem</user>
+		<password></password>
+	</serviceaccount>
+	<workingdirectory>C:\Users\Neotel\Desktop\multichannel-NEO\multichannel-neo\api</workingdirectory>
+</service>

@@ -23,6 +23,22 @@ router.get(
   middleware.verifyToken,
   indexController.authenticate
 );
+
+/**
+ * @swagger
+ * /integracionBody:
+ *  get:
+ *    description: Recibe un request, toma el Body que debe tener las propiedades "idTask", "parameters" y "jsonParam" para redireccionarlas a la NeoApi al método ExecuteTask que corresponda.Tiene 2 formas de ejecutarse, si "jsonParam" es "false", cada parámetro de "parameters" se trata como un parámetro distinto para el idTask recibido, si en cambio es "true", se enviarán todos los parameters como un sólo parametro.
+ *    produces:
+ *       - application/json
+ *    responses:
+ *      '500':
+ *        description: Internal Server Error
+ *      '404':
+ *        description: Not Found
+ *      '200':
+ *        description: Ok
+ */
 router.get("/integracionBody", integracionBody);
 
 module.exports = router;
