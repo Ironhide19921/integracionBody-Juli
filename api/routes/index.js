@@ -2,7 +2,7 @@ var express = require("express");
 var router = express.Router();
 const indexController = require("../controllers/indexController");
 const middleware = require("../middleware/middleware");
-const { resultadoChat } = require("../controllers/chats");
+const { integracionBody } = require("../controllers/integracionBody");
 
 router.get("/", indexController.home);
 /**
@@ -23,6 +23,6 @@ router.get(
   middleware.verifyToken,
   indexController.authenticate
 );
-router.get("/chat", resultadoChat);
+router.get("/integracionBody", integracionBody);
 
 module.exports = router;
