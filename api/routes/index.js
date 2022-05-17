@@ -2,7 +2,7 @@ var express = require("express");
 var router = express.Router();
 const indexController = require("../controllers/indexController");
 const middleware = require("../middleware/middleware");
-const { integracionBody } = require("../controllers/integracionBody");
+const { executeTask } = require("../controllers/executeTask");
 
 router.get("/", indexController.home);
 /**
@@ -26,7 +26,7 @@ router.get(
 
 /**
  * @swagger
- * /integracionBody:
+ * /executeTask:
  *  get:
  *    description: Recibe un request, toma el Body que debe tener las propiedades "idTask", "parameters" y "jsonParam" para redireccionarlas a la NeoApi al método ExecuteTask que corresponda.Tiene 2 formas de ejecutarse, si "jsonParam" es "false", cada parámetro de "parameters" se trata como un parámetro distinto para el idTask recibido, si en cambio es "true", se enviarán todos los parameters como un sólo parametro.
  *    produces:
@@ -39,6 +39,6 @@ router.get(
  *      '200':
  *        description: Ok
  */
-router.get("/integracionBody", integracionBody);
+router.get("/executeTask", executeTask);
 
 module.exports = router;

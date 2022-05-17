@@ -1,6 +1,6 @@
 const { Router } = require("express");
 
-const { integracionBody } = require("../controllers/integracionBody");
+const { executeTask } = require("../controllers/executeTask");
 
 const router = Router();
 

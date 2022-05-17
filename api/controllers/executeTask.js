@@ -2,30 +2,29 @@ const { response } = require("express");
 const axios = require("axios");
 const parseString = require("xml2js").parseString;
 const siteConfig = require("../modules/Config");
+const siteLogger = require("../modules/Logger");
 
-const integracionBody = async (req = request, res = response) => {
+const executeTask = async (req = request, res = response) => {
   try {
-    if (
-      req.body.idTask == undefined ||
-      req.body.parameters == undefined ||
-      req.body.jsonParam == undefined
-    ) {
-      let devolucion = "";
-      devolucion =
-        (req.body.idTask == undefined ? devolucion + " idTask," : devolucion) +
-        (req.body.parameters == undefined
-          ? devolucion + " parameters,"
-          : devolucion) +
-        (req.body.jsonParam == undefined
-          ? devolucion + " jsonParam,"
-          : devolucion);
-      devolucion = devolucion.substring(0, devolucion.length - 1);
-
+    // return validarParams(req, res);
+    const devolucion = validarParams(req, res);
+    console.log("devolucion", devolucion);
+    // const mensaje = {
+    //   msg: "Faltan los siguientes parámetros en la request:asdad",
+    // };
+    siteLogger.logError(
+      {
+        errorMessage: `Faltan los siguientes parámetros en la request:${devolucion}`,
+      }
+      // JSON.parse(`Faltan los siguientes parámetros en la request:${devolucion}`)
+    );
+    if (devolucion) {
       return res.status(404).json({
-        data: `404 | Faltan los siguientes parámetros en la request:${devolucion}`,
+        errorMessage: `Faltan los siguientes parámetros en la request:${devolucion}`,
       });
     }
 
+    console.log("paso validacion");
     const { idTask, parameters, jsonParam } = req.body;
     const cantParameters = Object.keys(parameters[0]).length;
 
@@ -40,6 +39,11 @@ const integracionBody = async (req = request, res = response) => {
     let params = "";
 
     if (!jsonParam) {
+      if (cantParameters > 20) {
+        return res.status(400).json({
+          errorMessage: `Se recibieron más de 20 parámetros, máximo posible`,
+        });
+      }
       newObject = { idTask, ...parameters[0] };
       params = new URLSearchParams(newObject);
       executeTask =
@@ -54,8 +58,7 @@ const integracionBody = async (req = request, res = response) => {
       newObject = { idTask };
       params = new URLSearchParams(newObject);
       //Fuerzo que sea un parámetro sólo,ExecuteTask01
-      executeTask =
-        cantParameters.toString().length == 1 ? "0" + 1 : cantParameters;
+      executeTask = "01";
       url = `http://200.5.98.203/neoapi/webservice.asmx/ExecuteTask${executeTask}?${params}&param1=${param1}`;
     }
 
@@ -82,12 +85,33 @@ const integracionBody = async (req = request, res = response) => {
     console.log("error", error);
     console.log("error.response.data", error.response.data);
     return res.status(error.response.status).json({
-      data: error.response.data,
+      errorMessage: error.response.data,
       error,
     });
   }
 };
 
+function validarParams(req = request, res = response, next) {
+  if (
+    req.body.idTask == undefined ||
+    req.body.parameters == undefined ||
+    req.body.jsonParam == undefined
+  ) {
+    let devolucion = "";
+    devolucion =
+      (req.body.idTask == undefined ? devolucion + " idTask," : devolucion) +
+      (req.body.parameters == undefined
+        ? devolucion + " parameters,"
+        : devolucion) +
+      (req.body.jsonParam == undefined
+        ? devolucion + " jsonParam,"
+        : devolucion);
+    devolucion = devolucion.substring(0, devolucion.length - 1);
+
+    return devolucion;
+  }
+}
+
 module.exports = {
-  integracionBody,
+  executeTask,
 };
