@@ -8,28 +8,23 @@ const executeTask = async (req = request, res = response) => {
   try {
     // return validarParams(req, res);
     const devolucion = validarParams(req, res);
-    console.log("devolucion", devolucion);
-    // const mensaje = {
-    //   msg: "Faltan los siguientes parámetros en la request:asdad",
-    // };
-    siteLogger.logError(
-      {
-        errorMessage: `Faltan los siguientes parámetros en la request:${devolucion}`,
-      }
-      // JSON.parse(`Faltan los siguientes parámetros en la request:${devolucion}`)
-    );
+    siteLogger.log({ devolucion: devolucion });
+
     if (devolucion) {
+      const message = `Faltan los siguientes parámetros en la request:${devolucion}`;
+      siteLogger.logError({ errorMessage: message });
       return res.status(404).json({
-        errorMessage: `Faltan los siguientes parámetros en la request:${devolucion}`,
+        errorMessage: message,
       });
     }
 
-    console.log("paso validacion");
+    siteLogger.log({ msg: "Pasó validación de parámetros vacíos" });
+
     const { idTask, parameters, jsonParam } = req.body;
     const cantParameters = Object.keys(parameters[0]).length;
 
     parameters.forEach((element) => {
-      console.log("element", element);
+      siteLogger.log({ params: element });
     });
 
     let newObject = {};
@@ -40,8 +35,10 @@ const executeTask = async (req = request, res = response) => {
 
     if (!jsonParam) {
       if (cantParameters > 20) {
+        const message = `Se recibieron más de 20 parámetros, máximo posible`;
+        siteLogger.log({ errorMessage: message });
         return res.status(400).json({
-          errorMessage: `Se recibieron más de 20 parámetros, máximo posible`,
+          errorMessage: message,
         });
       }
       newObject = { idTask, ...parameters[0] };
@@ -54,38 +51,45 @@ const executeTask = async (req = request, res = response) => {
       url = `http://200.5.98.203/neoapi/webservice.asmx/ExecuteTask${executeTask}?${params}`;
     } else {
       param1 = JSON.stringify(parameters[0]);
-      console.log("param1", param1);
+      siteLogger.log({ param1: param1 });
       newObject = { idTask };
       params = new URLSearchParams(newObject);
       //Fuerzo que sea un parámetro sólo,ExecuteTask01
       executeTask = "01";
       url = `http://200.5.98.203/neoapi/webservice.asmx/ExecuteTask${executeTask}?${params}&param1=${param1}`;
     }
-
-    console.log("cantParameters", cantParameters);
-    console.log("parameters[0]", parameters[0]);
-    console.log("param1", param1);
-    console.log("params", params);
-    console.log("newObject", newObject);
-    console.log("url", url);
+    siteLogger.log({ url: url });
+    siteLogger.log({ cantParameters: cantParameters });
+    siteLogger.log({ parameters0: parameters[0] });
+    siteLogger.log({ param1: param1 });
+    siteLogger.log({ params: params });
+    siteLogger.log({ newObject: newObject });
+    siteLogger.log({ url: url });
 
     const resp = await axios.get(url);
     const { data } = resp;
-    console.log("data", data);
+    siteLogger.log({ data: data });
     let dataParsed = "";
 
-    parseString(data, (err, result) => {
-      dataParsed = jsonParam ? JSON.parse(result.string._) : result.string._;
-    });
+    //Retornar resp en json
+    // parseString(data, (err, result) => {
+    //   dataParsed = jsonParam ? JSON.parse(result.string._) : result.string._;
+    // });
 
-    return res.status(resp.status).json({
-      data: dataParsed,
-    });
+    // return res.status(resp.status).json({
+    //   data: dataParsed,
+    // });
+
+    return res.status(resp.status).send(data);
   } catch (error) {
-    console.log("error", error);
-    console.log("error.response.data", error.response.data);
+    const message = error.response.data;
+    // const message = error.response.data;
+    siteLogger.log({ errorMessage: message });
+    //Arroja error el logError al pasarle el error de la neoapi
+    // siteLogger.logError({ errorMessage: error });
+
     return res.status(error.response.status).json({
-      errorMessage: error.response.data,
+      errorMessage: message,
       error,
     });
   }
