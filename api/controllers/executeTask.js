@@ -1,92 +1,75 @@
+require("dotenv").config();
 const { response } = require("express");
 const axios = require("axios");
 const parseString = require("xml2js").parseString;
-const siteConfig = require("../modules/Config");
 const siteLogger = require("../modules/Logger");
 
 const executeTask = async (req = request, res = response) => {
   try {
-    // return validarParams(req, res);
-    const devolucion = validarParams(req, res);
-    siteLogger.log({ devolucion: devolucion });
+    const { idTask, ipurl } = process.env;
 
-    if (devolucion) {
-      const message = `Faltan los siguientes parámetros en la request:${devolucion}`;
+    if (idTask == "" || !idTask) {
+      const message = `No hay idtask configurado en el archivo DOTENV`;
       siteLogger.logError({ errorMessage: message });
       return res.status(404).json({
         errorMessage: message,
       });
     }
 
-    siteLogger.log({ msg: "Pasó validación de parámetros vacíos" });
+    const parameters = req.body;
+    const cantParameters = Object.keys(parameters).length;
 
-    const { idTask, parameters, jsonParam } = req.body;
-    const cantParameters = Object.keys(parameters[0]).length;
-
-    parameters.forEach((element) => {
-      siteLogger.log({ params: element });
-    });
+    if (cantParameters > 20) {
+      const message = `Se recibieron más de 20 parámetros, máximo posible`;
+      siteLogger.log({ errorMessage: message });
+      return res.status(400).json({
+        errorMessage: message,
+      });
+    }
 
     let newObject = {};
-    let param1 = "";
+    let objectWithParams = {};
     let url = "";
     let executeTask = "";
     let params = "";
 
-    if (!jsonParam) {
-      if (cantParameters > 20) {
-        const message = `Se recibieron más de 20 parámetros, máximo posible`;
-        siteLogger.log({ errorMessage: message });
-        return res.status(400).json({
-          errorMessage: message,
-        });
+    newObject = { idTask, ...parameters };
+    for (let i = 0; i < Object.keys(newObject).length; i++) {
+      if (i == 0) {
+        let newElement = `idTask`;
+        objectWithParams[newElement] = idTask;
+      } else {
+        let newElement = `param${i}`;
+        objectWithParams[newElement] =
+          typeof newObject[Object.keys(newObject)[i]] == "object"
+            ? JSON.stringify(newObject[Object.keys(newObject)[i]])
+            : newObject[Object.keys(newObject)[i]];
       }
-      newObject = { idTask, ...parameters[0] };
-      params = new URLSearchParams(newObject);
-      executeTask =
-        cantParameters.toString().length == 1
-          ? "0" + cantParameters
-          : cantParameters;
-      //Cantidad de parámetros variables,ExecuteTaskXX
-      url = `http://200.5.98.203/neoapi/webservice.asmx/ExecuteTask${executeTask}?${params}`;
-    } else {
-      param1 = JSON.stringify(parameters[0]);
-      siteLogger.log({ param1: param1 });
-      newObject = { idTask };
-      params = new URLSearchParams(newObject);
-      //Fuerzo que sea un parámetro sólo,ExecuteTask01
-      executeTask = "01";
-      url = `http://200.5.98.203/neoapi/webservice.asmx/ExecuteTask${executeTask}?${params}&param1=${param1}`;
     }
+
+    params = new URLSearchParams(objectWithParams);
+
+    executeTask =
+      cantParameters.toString().length == 1
+        ? "0" + cantParameters
+        : cantParameters;
+    url = `http://${ipurl}/neoapi/webservice.asmx/ExecuteTask${executeTask}?${params}`;
+
     siteLogger.log({ url: url });
     siteLogger.log({ cantParameters: cantParameters });
-    siteLogger.log({ parameters0: parameters[0] });
-    siteLogger.log({ param1: param1 });
-    siteLogger.log({ params: params });
-    siteLogger.log({ newObject: newObject });
-    siteLogger.log({ url: url });
+    siteLogger.log({ objectWithParams: objectWithParams });
 
     const resp = await axios.get(url);
     const { data } = resp;
     siteLogger.log({ data: data });
-    let dataParsed = "";
-
-    //Retornar resp en json
-    // parseString(data, (err, result) => {
-    //   dataParsed = jsonParam ? JSON.parse(result.string._) : result.string._;
-    // });
-
-    // return res.status(resp.status).json({
-    //   data: dataParsed,
-    // });
 
     return res.status(resp.status).send(data);
+    // return res.status(200).json({ ok: "ok" });
   } catch (error) {
+    // return res.status(400).json({ error: "error" });
     const message = error.response.data;
-    // const message = error.response.data;
     siteLogger.log({ errorMessage: message });
-    //Arroja error el logError al pasarle el error de la neoapi
-    // siteLogger.logError({ errorMessage: error });
+    siteLogger.log({ error: error });
 
     return res.status(error.response.status).json({
       errorMessage: message,
@@ -94,27 +77,6 @@ const executeTask = async (req = request, res = response) => {
     });
   }
 };
-
-function validarParams(req = request, res = response, next) {
-  if (
-    req.body.idTask == undefined ||
-    req.body.parameters == undefined ||
-    req.body.jsonParam == undefined
-  ) {
-    let devolucion = "";
-    devolucion =
-      (req.body.idTask == undefined ? devolucion + " idTask," : devolucion) +
-      (req.body.parameters == undefined
-        ? devolucion + " parameters,"
-        : devolucion) +
-      (req.body.jsonParam == undefined
-        ? devolucion + " jsonParam,"
-        : devolucion);
-    devolucion = devolucion.substring(0, devolucion.length - 1);
-
-    return devolucion;
-  }
-}
 
 module.exports = {
   executeTask,
