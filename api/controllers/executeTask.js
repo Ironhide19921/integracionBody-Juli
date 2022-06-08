@@ -7,9 +7,17 @@ const siteLogger = require("../modules/Logger");
 const executeTask = async (req = request, res = response) => {
   try {
     const { idTask, ipurl } = process.env;
-
-    if (idTask == "" || !idTask) {
+    console.log("ipurl", ipurl);
+    if (idTask == "" || !idTask || idTask == undefined) {
       const message = `No hay idtask configurado en el archivo DOTENV`;
+      siteLogger.logError({ errorMessage: message });
+      return res.status(404).json({
+        errorMessage: message,
+      });
+    }
+
+    if (ipurl == "" || !ipurl || ipurl == undefined) {
+      const message = `No hay ipurl configurado en el archivo DOTENV`;
       siteLogger.logError({ errorMessage: message });
       return res.status(404).json({
         errorMessage: message,
